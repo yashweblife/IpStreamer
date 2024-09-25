@@ -1,52 +1,52 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
+import { useEffect, useRef, useState } from 'react';
+import { Button, Image, StyleSheet, TextInput, View } from 'react-native';
+import WebView from 'react-native-webview';
 export default function HomeScreen() {
+  const [feedSourceURL, setFeedSourceURL] = useState('http://192.168.0.28:81/stream');
+  const urlRef = useRef<HTMLInputElement>(null);
+  const [isReady, setIsReady] = useState(false);
+  const webcamRef = useRef<WebView>(null);
+  useEffect(() => {
+    ready();
+  },[])
+  async function ready(){
+    // await tf.ready()
+    if(!webcamRef.current) return
+    // tf.data.webcam(webcamRef.current!)
+    // setIsReady(true)
+    webcamRef.current
+  }
+  async function handleSubmit() {
+    if (!urlRef.current) return;
+    const val = urlRef.current.value;
+    try {
+      const test = await fetch(val)
+      if (test) {
+        setFeedSourceURL(urlRef.current.value);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+  }
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={{ padding: 20, marginTop: 30, width: "100%", display: 'flex', justifyContent: "center", alignItems: "center", flexDirection: "column", height: 300, borderRadius: "50%" }}>
+      {/* <WebView
+      ref={webcamRef}
+        style={{ flex: 1, width: 300, height: 300, aspectRatio: 1 }}
+        source={{
+          uri: feedSourceURL
+        }}
+      ></WebView> */}
+      <Image
+        style={{ flex: 1, width: 300, height: 300, aspectRatio: 1 }}
+        source={{uri:"http://192.168.0.28:81/stream"}}
+      ></Image>
+      <View style={{ flexDirection: "row", gap: 8, width: "300px" }}>
+        <TextInput style={{ width: 200, padding: 10 }} ref={urlRef}></TextInput>
+        <Button title="Submit" onPress={handleSubmit} />
+      </View>
+    </View>
   );
 }
 
